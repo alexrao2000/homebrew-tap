@@ -72,8 +72,9 @@ for f in "${formulae[@]}"; do
     state="installed $inst (current)"
   fi
 
-  echo "  $name — $state"
-  [ -n "$home" ] && echo "      $home"
+  header="  $name — $state"
+  [ -n "$home" ] && header="$header - $home"
+  echo "$header"
   blurb="$(purpose "$name")"; [ -n "$blurb" ] || blurb="$(field 'desc "\(.*\)"' "$f")"
   echo "$blurb" | sed 's/^/      /'
   echo
