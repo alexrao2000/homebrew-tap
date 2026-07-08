@@ -1,37 +1,17 @@
 #!/usr/bin/env bash
-#:  `raocow` — what's in raocow/tap, and why it exists
+#:  `raocow`
 #:
-#:  A personal Homebrew tap: a few small tools I install on a fresh Mac to
-#:  speed up my dev cycle. None of it is essential — they're shortcuts I
-#:  trust and reach for every day, packaged so a new machine is one
-#:  `brew install` away from feeling like home.
-#:
-#:  The tools:
-#:
-#:    gtools   Custom `git` subcommands for a PR-based team workflow.
-#:             `git sweep` clears merged branches (quicker than asking an
-#:             LLM to); `git pr` / `git here` / `git done` check out, test,
-#:             and tear down a coworker's PR; `git sync` rebases + pushes.
-#:             Great if you work on a team; less useful solo without PRs.
-#:
-#:    ezenv    Opt-in zsh environment helpers for a fresh Mac. Per-repo
-#:             `.venv` auto-activation and bare python/pip -> python3/pip3,
-#:             each enabled a la carte with one command — no dotfile
-#:             spelunking, and nothing turns on until you ask for it.
+#:  Summarize raocow/tap: each tool, what it's for, and its install state.
+#:  For per-command docs, see the tool's own help (e.g. `git sweep -h`,
+#:  `ezenv --help`).
 #:
 #:  Usage:
-#:    brew raocow              list each formula with version + install state
-#:    brew raocow --help       show this help
-#:
-#:  Related built-ins:
-#:    brew tap-info raocow/tap   tap metadata (formula count, git remote)
-#:    brew desc FORMULA          one-line description of a formula
-#:    brew info FORMULA          full details, dependencies, caveats
-#:    brew upgrade FORMULA       pull the latest release from the tap
+#:    brew raocow            summarize the tap
+#:    brew raocow --help     show this help
 set -euo pipefail
 
-# Everything below reads files and Homebrew's own env vars — no `brew`
-# subprocess (each would cost ~0.5s of Ruby startup + formula loading).
+# Reads files + Homebrew's env vars only — no `brew` subprocess (each costs
+# ~0.5s of Ruby startup + formula loading).
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cellar="${HOMEBREW_CELLAR:-${HOMEBREW_PREFIX:-/opt/homebrew}/Cellar}"
 
@@ -52,17 +32,33 @@ installed_version() {  # highest version dir in the Cellar, empty if none
   [ ${#dirs[@]} -gt 0 ] || return 0
   printf '%s\n' "${dirs[@]}" | xargs -n1 basename | sort -V | tail -1
 }
+# Editorial purpose blurb per tool (falls back to the formula desc otherwise).
+purpose() {
+  case "$1" in
+    gtools) cat <<'P'
+Custom git subcommands for a PR-based team workflow. git sweep clears merged
+branches (quicker than asking an LLM to); git pr / git here / git done check
+out, test, and tear down a coworker's PR; git sync rebases and pushes.
+Per-command help: git <cmd> -h  (or the man page: git <cmd> --help)
+P
+    ;;
+    ezenv) cat <<'P'
+Opt-in zsh environment helpers for a fresh Mac: per-repo .venv auto-activation
+and bare python/pip -> python3/pip3, each enabled a la carte with one command
+— no dotfile spelunking, nothing on until you ask for it.
+Per-feature help: ezenv --help
+P
+    ;;
+  esac
+}
 
 echo "raocow/tap — a few small tools to make a fresh Mac feel like home"
-echo "${#formulae[@]} formulae · $repo · full purpose: brew raocow --help"
+echo "A personal Homebrew tap: shortcuts I trust and reach for every day, so a"
+echo "new machine is one 'brew install' away from feeling like home."
 echo
-
-pad=6
-for f in "${formulae[@]}"; do n="$(basename "$f" .rb)"; [ "${#n}" -gt "$pad" ] && pad="${#n}"; done
 
 for f in "${formulae[@]}"; do
   name="$(basename "$f" .rb)"
-  desc="$(field 'desc "\(.*\)"' "$f")"
   home="$(field 'homepage "\(.*\)"' "$f")"
   latest="$(tap_version "$f")"
   inst="$(installed_version "$name")"
@@ -76,11 +72,11 @@ for f in "${formulae[@]}"; do
     state="installed $inst (current)"
   fi
 
-  printf '  %-*s  %s\n' "$pad" "$name" "${desc:-(no description)}"
-  printf '  %-*s  %s\n'   "$pad" "" "$state"
-  [ -n "$home" ] && printf '  %-*s  %s\n' "$pad" "" "$home"
+  echo "  $name — $state"
+  [ -n "$home" ] && echo "  $(printf '%*s' "${#name}" '')   $home"
+  blurb="$(purpose "$name")"; [ -n "$blurb" ] || blurb="$(field 'desc "\(.*\)"' "$f")"
+  echo "$blurb" | sed 's/^/      /'
   echo
 done
 
-echo "Install:  brew install <formula>      Upgrade:  brew upgrade <formula>"
-echo "Details:  brew info <formula>          Docs:     brew raocow --help"
+echo "Install: brew install <formula>   Upgrade: brew upgrade <formula>   Details: brew info <formula>"
