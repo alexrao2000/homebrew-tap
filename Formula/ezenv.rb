@@ -1,8 +1,8 @@
 class Ezenv < Formula
   desc "Opt-in shell env helpers: per-repo venv auto-activation and python/pip fallback"
   homepage "https://github.com/raocow/ezenv"
-  url "https://github.com/raocow/ezenv/archive/refs/tags/v0.1.1.tar.gz"
-  sha256 "d02af271bc002cc0e2dd1def80fa7d571e7bd5cd98b0f2ca2b37cbac90dffd7c"
+  url "https://github.com/raocow/ezenv/archive/refs/tags/v0.1.2.tar.gz"
+  sha256 "41a70ba7628c70eab9798c50f642fd4c0d594c2f7b78c55a07184243cf54772c"
   license "MIT"
   head "https://github.com/raocow/ezenv.git", branch: "master"
 
