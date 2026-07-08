@@ -75,6 +75,7 @@ for f in "${formulae[@]}"; do
   header="  $name — $state"
   [ -n "$home" ] && header="$header - $home"
   echo "$header"
+  echo
   blurb="$(purpose "$name")"; [ -n "$blurb" ] || blurb="$(field 'desc "\(.*\)"' "$f")"
   echo "$blurb" | sed 's/^/      /'
   echo
