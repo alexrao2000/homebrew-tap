@@ -1,8 +1,8 @@
 class Gtools < Formula
   desc "Personal custom git subcommands: sweep, sync, pr, done"
   homepage "https://github.com/raocow/gtools"
-  url "https://github.com/raocow/gtools/archive/refs/tags/v0.9.0.tar.gz"
-  sha256 "0ac1291337fa18e9349a96a5c8bcfdf46280dda8914f50ea998ab30febd0ba12"
+  url "https://github.com/raocow/gtools/archive/refs/tags/v0.9.1.tar.gz"
+  sha256 "9da00ac7a8a5ea8f6975c2896113179b18c325e0d29b87d40955d0b3b2e506d6"
 
   # `git pr` shells out to the GitHub CLI; the other commands don't need it.
   depends_on "gh"
@@ -20,9 +20,13 @@ class Gtools < Formula
       For Tab-completion of these commands — including 'git new <TAB>' for
       cycling through short branch names instead of typing a long one — make
       sure Homebrew's zsh completions are on your fpath (skip if you already
-      have this, e.g. from another formula):
+      have this, e.g. from another formula). Append, don't prepend: the git
+      formula ships its own _git (a different implementation) in this same
+      directory, which doesn't support the _git-<subcommand> dispatch these
+      completions rely on — prepending would let it shadow the system _git
+      that does:
 
-        fpath=(#{HOMEBREW_PREFIX}/share/zsh/site-functions $fpath)
+        fpath+=(#{HOMEBREW_PREFIX}/share/zsh/site-functions)
         autoload -Uz compinit && compinit
     EOS
   end
