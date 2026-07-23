@@ -1,8 +1,8 @@
 class Gtools < Formula
   desc "Personal custom git subcommands: sweep, sync, pr, done"
   homepage "https://github.com/raocow/gtools"
-  url "https://github.com/raocow/gtools/archive/refs/tags/v0.10.1.tar.gz"
-  sha256 "083d15ed887f71f3135b0ce2f7d6eddf0c2fce8a311e4e54b3aae8a5fe3ae13d"
+  url "https://github.com/raocow/gtools/archive/refs/tags/v0.10.2.tar.gz"
+  sha256 "f8cbda72dcf2ae5aab9f9af051346617dfc6a85d08e6f8798e0b421a1e42c0b2"
 
   # `git pr` shells out to the GitHub CLI; the other commands don't need it.
   depends_on "gh"
