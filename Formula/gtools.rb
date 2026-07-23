@@ -1,8 +1,8 @@
 class Gtools < Formula
   desc "Personal custom git subcommands: sweep, sync, pr, done"
   homepage "https://github.com/raocow/gtools"
-  url "https://github.com/raocow/gtools/archive/refs/tags/v0.7.0.tar.gz"
-  sha256 "dc69e63f1816c4c3eb2a8c2c8492efb7d2deb1e5b1b0c03eedc072e93d7c0adc"
+  url "https://github.com/raocow/gtools/archive/refs/tags/v0.8.0.tar.gz"
+  sha256 "dd56f480c848413393774e533d08e73e4c5893a0615048731717ce3a9cd4fe74"
 
   # `git pr` shells out to the GitHub CLI; the other commands don't need it.
   depends_on "gh"
@@ -10,6 +10,20 @@ class Gtools < Formula
   def install
     bin.install Dir["bin/git-*"]
     man1.install Dir["man/git-*.1"]
+    zsh_completion.install Dir["share/zsh/site-functions/*"] if
+      Dir.exist?("share/zsh/site-functions")
+  end
+
+  def caveats
+    <<~EOS
+      For Tab-completion of these commands — including 'git new <TAB>' for
+      cycling through short branch names instead of typing a long one — make
+      sure Homebrew's zsh completions are on your fpath (skip if you already
+      have this, e.g. from another formula):
+
+        fpath=(#{HOMEBREW_PREFIX}/share/zsh/site-functions $fpath)
+        autoload -Uz compinit && compinit
+    EOS
   end
 
   test do
