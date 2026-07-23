@@ -1,8 +1,8 @@
 class Gtools < Formula
   desc "Personal custom git subcommands: sweep, sync, pr, done"
   homepage "https://github.com/raocow/gtools"
-  url "https://github.com/raocow/gtools/archive/refs/tags/v0.10.0.tar.gz"
-  sha256 "132b2500689d3a311c69bb107428c2352e256bd7caca8d496451d532aef232f1"
+  url "https://github.com/raocow/gtools/archive/refs/tags/v0.10.1.tar.gz"
+  sha256 "083d15ed887f71f3135b0ce2f7d6eddf0c2fce8a311e4e54b3aae8a5fe3ae13d"
 
   # `git pr` shells out to the GitHub CLI; the other commands don't need it.
   depends_on "gh"
@@ -17,16 +17,17 @@ class Gtools < Formula
 
   def caveats
     <<~EOS
-      For Tab-completion of these commands — including 'git new <TAB>' for
-      cycling through short branch names instead of typing a long one — make
-      sure Homebrew's zsh completions are on your fpath (skip if you already
-      have this, e.g. from another formula). Append, don't prepend: the git
-      formula ships its own _git (a different implementation) in this same
-      directory, which doesn't support the _git-<subcommand> dispatch these
-      completions rely on — prepending would let it shadow the system _git
-      that does:
+      For Tab-completion — including 'git new <TAB>' for short branch names and
+      'git pr list <TAB>' — add this to ~/.zshrc. Homebrew's own site-functions
+      dir (where these completions live) is already on fpath via `brew
+      shellenv`, BUT the git formula also ships its own _git there, and it does
+      NOT support the git-<subcommand> dispatch these completions rely on — so
+      with it in front, 'git pr list <TAB>' / 'git new <TAB>' fall through to
+      plain file completion. Putting zsh's own function dirs first makes zsh's
+      _git (which does support it) win, while keeping Homebrew's dir on fpath:
 
-        fpath+=(#{HOMEBREW_PREFIX}/share/zsh/site-functions)
+        typeset -U fpath
+        fpath=(/usr/share/zsh/${ZSH_VERSION}/functions /usr/share/zsh/site-functions $fpath)
         autoload -Uz compinit && compinit
     EOS
   end
